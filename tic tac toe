@@ -236,7 +236,7 @@ void input_difficulty() {
     } else {
       break;
     }
-  };
+  }
 }
 
 void clear_screen() {
