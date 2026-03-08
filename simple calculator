@@ -1,91 +1,100 @@
 #include <stdio.h>
 #include <math.h>
+void print_menu();
+double division(double, double);
+double modulus(int, int);
+int main()
+{
+    int choice;
+    double a, b, result;
+    while (1)
+    {
+        print_menu();
+        scanf("%d", &choice);
+        if (choice == 7)
+        {
+            printf("\t\t----exiting program----");
+
+            break;
+        }
+        else if(choice < 1 || choice > 7)
+        {
+            fprintf(stderr, "invalid argument");
+        }
+        else
+        {
+            printf("enter first number :");
+            scanf("%lf", &a);
+            printf("\nenter second number:");
+            scanf("%lf", &b);
+
+            switch (choice)
+            {
+
+            case 1:
+                result = a + b;
+                break;
+            case 2:
+                result = a - b;
+                break;
+            case 3:
+                result = a * b;
+                break;
+            case 4:
+                result = division(a, b);
+                break;
+            case 5:
+                result = modulus(a, b);
+                break;
+            case 6:
+                result = pow(a, b);
+                break;
+
+            default:
+                break;
+            }
+            if (!isnan(result))
+            {
+                printf("\n %.2lf", result);
+            }
+
+            return 0;
+        }
+    }
+}
 void print_menu()
 {
-    printf("\n\n\t\t____________________");
-    printf("\n\t\twelcome to simple calculator");
-    printf("\n1.add\n");
-    printf("2.subtract\n");
-    printf("3.multiply\n");
-    printf("4.division\n");
-    printf("5.modulus\n");
-    printf("6.power\n");
-    printf("7.exit\n");
-    
-    printf("now enter your choice:");
-    
+    printf("\n\n");
+    printf("\n\t\tWELCOME TO SIMPLE CALCULATOR");
+    printf("\n1.Addition");
+    printf("\n2.Substraction");
+    printf("\n3.Multiplication");
+    printf("\n4.Division");
+    printf("\n5.Modulus");
+    printf("\n6.Power");
+    printf("\n7.Exit");
+    printf("\nenter your choice:");
 }
-double division(double, double);
 double division(double a, double b)
 {
     if (b == 0)
     {
-        fprintf(stderr, "INVALID ARGUMENT FOR DIVISION");
+        fprintf(stderr, "invalid argument!!");
     }
     else
     {
         return a / b;
     }
 }
-double modulus(int, int);
+
 double modulus(int a, int b)
 {
     if (b == 0)
     {
-        fprintf(stderr, "INVALID ARGUMENT FOR MODULUS");
+        fprintf(stderr, "invalid argument!!");
     }
     else
     {
         return a % b;
     }
-}
-int main()
-{
-    int choice;
-    double first, second, result;
-    while (1)
-    {
-        print_menu();
-        scanf("%d", &choice);
-
-        if (choice == 7)
-        {
-            break;
-        }
-        if (choice < 1 || choice > 7)
-        {
-            fprintf(stderr, "invalid menu choice");
-        }
-        printf("enter 1st no:");
-        scanf("%lf", &first);
-        printf("\n");
-        printf("enter 2nd no:");
-        scanf("%lf", &second);
-        switch (choice)
-        {
-        case 1:
-            result = first + second;
-            break;
-        case 2:
-        result =first-second;
-        break;
-            case 3:
-        result =first*second;
-        break;
-            case 4:
-        result =division(first,second);
-        break;
-            case 5:
-        result =modulus(first,second);
-        break;
-            case 6:
-            result =pow(first,second);
-            break;
-        }
-        if (!isnan(result))
-        {
-           printf("result of the opereation is %.2f\n",result);
-        }
-    };
-    return 0;
 }
