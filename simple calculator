@@ -2,8 +2,8 @@
 #include <math.h>
 void print_menu()
 {
-    printf("\n\n____________________");
-    printf("\nwelcome to simple calculator");
+    printf("\n\n\t\t____________________");
+    printf("\n\t\twelcome to simple calculator");
     printf("\n1.add\n");
     printf("2.subtract\n");
     printf("3.multiply\n");
