@@ -1,0 +1,141 @@
+#include <stdio.h>
+#include <conio.h>
+#include <string.h>
+#include <windows.h>
+#define MAX_USERS 10
+#define CREDENTIAL_LENGTH 30
+typedef struct
+{
+  char username[CREDENTIAL_LENGTH];
+  char password[CREDENTIAL_LENGTH];
+} user;
+user users[MAX_USERS];
+
+int user_count = 0;
+void fix_fgetc_input(char *);
+void input_credentials(char *, char *);
+void regrister_user();
+int login_user();
+
+int main()
+{
+  int option;
+  int user_index;
+  while (1)
+  {
+    printf("welcome\n");
+    printf("1) register\n");
+    printf("2) login\n");
+    printf("3) exit\n");
+    printf("choose an option");
+    scanf("%d", &option);
+    getchar();
+    switch (option)
+    {
+    case 1:
+      regrister_user();
+      break;
+    case 2:
+      user_index = login_user();
+      if (user_index >= 0)
+      {
+        printf("\nLOGIN SUCCESSFULL!! \n WELCOME %s", users[user_index].username);
+      }
+      else
+      {
+        printf("\nlogin unsuccessfull!!\n");
+      }
+      break;
+    case 3:
+      printf("EXITING PROGRAM!!\n");
+      return 0;
+      break;
+    default:
+      printf("\nINVALID OPTION.PLEASE TRY AGAIN\n");
+
+      break;
+    }
+  }
+  return 0;
+}
+
+void fix_fgetc_input(char *string)
+{
+  int index = strcspn(string, "\n");
+  string[index] = '\0';
+}
+
+void input_credentials(char *username, char *password)
+{
+  printf("enter user name:");
+  fgets(username, CREDENTIAL_LENGTH, stdin);
+  fix_fgetc_input(username);
+
+  printf("\nenterpassword(enable masking):");
+
+  fflush(stdout);
+  HANDLE hStdin;
+  DWORD originalMode, newMode;
+  hStdin = GetStdHandle(STD_INPUT_HANDLE);
+  GetConsoleMode(hStdin, &originalMode);
+  newMode = originalMode & (~ENABLE_ECHO_INPUT); // disable echo
+  SetConsoleMode(hStdin, newMode);
+
+  int i = 0;
+  char ch;
+  while (1)
+  {
+    ch = _getch();
+    if (ch == 13) // ascii value
+    {
+      break;
+    }
+    else if (ch == 8) // ASCII value
+    {
+      if (i > 0)
+      {
+        i--;
+        printf("\b \b"); // delete
+      }
+    }
+    else if (i < CREDENTIAL_LENGTH - 1)
+    {
+      password[i++] = ch;
+      printf("*");
+    }
+  }
+  password[i] = '\0';
+  SetConsoleMode(hStdin, originalMode); // enable echo
+  printf("\n");
+}
+
+
+void regrister_user()
+{
+  if (user_count == MAX_USERS)
+  {
+    printf("\nMAXIMUM %d USERS ARE SUPPORTED!!!\n", MAX_USERS);
+    return;
+  }
+  
+  printf("\nregister a new user:\n");
+  input_credentials(users[user_count].username, users[user_count].password);
+  user_count++;
+  printf("\nREGRISTRATION SUCCESSFULL\n");
+}
+
+
+int login_user()
+{
+  char username[CREDENTIAL_LENGTH];
+  char password[CREDENTIAL_LENGTH];
+  input_credentials(username, password);
+  for (int i = 0; i < user_count; i++)
+  {
+    if (strcmp(users[i].username, username) == 0 && strcmp(users[i].password, password) == 0)
+    {
+      return i;
+    }
+  }
+  return -1;
+}
