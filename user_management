@@ -2,132 +2,130 @@
 #include <conio.h>
 #include <string.h>
 #include <windows.h>
-#define MAX_USERS 10
-#define CREDENTIAL_LENGTH 30
+
+#define credential_length 30
+#define max_users 10
+int user_count = 0;
 typedef struct
 {
-  char username[CREDENTIAL_LENGTH];
-  char password[CREDENTIAL_LENGTH];
+    char username[credential_length];
+    char password[credential_length];
 } user;
-user users[MAX_USERS];
-
-int user_count = 0;
-void fix_fgetc_input(char *);
-void input_credentials(char *, char *);
-void regrister_user();
+user users[max_users];
+void fix_input(char *);
+void input_details(char *, char *);
+void register_user();
 int login_user();
 
 int main()
 {
-  int option;
-  int user_index;
-  while (1)
-  {
-    printf("welcome\n");
-    printf("1) register\n");
-    printf("2) login\n");
-    printf("3) exit\n");
-    printf("choose an option");
-    scanf("%d", &option);
+    int k;
+    int option;
+    while(1)
+    {
+    printf("\n\t\tWELCOME TO USER MANAGEMENT\n");
+    printf("1)Regristration\n");
+    printf("2)Login\n");
+    printf("3)Exit\n");
+    scanf("%d",&option);
     getchar();
     switch (option)
     {
     case 1:
-      regrister_user();
-      break;
+        register_user();
+        break;
     case 2:
-      user_index = login_user();
-      if (user_index >= 0)
-      {
-        printf("\nLOGIN SUCCESSFULL!! \n WELCOME %s", users[user_index].username);
-      }
-      else
-      {
-        printf("\nlogin unsuccessfull!!\n");
-      }
-      break;
+     k=login_user();
+     if (k>=0)
+{
+    printf("login successfully for user %s\n",users[k].username);
+}
+else
+{
+    printf("login unsuccessful\n");
+}
+    break;
     case 3:
-      printf("EXITING PROGRAM!!\n");
-      return 0;
-      break;
+    printf("EXITING PROGRAM !!\n");
+    
+    return 0;
+    break;
+
     default:
-      printf("\nINVALID OPTION.PLEASE TRY AGAIN\n");
-
-      break;
+    printf("invalid input");
+    
+        break;
     }
-  }
-  return 0;
+}
+    return 0;
 }
 
-void fix_fgetc_input(char *string)
+void fix_input(char *string)
 {
-  int index = strcspn(string, "\n");
-  string[index] = '\0';
+    int n;
+    n = strcspn(string, "/n");
+    string[n] = '\0';
 }
 
-void input_credentials(char *username, char *password)
+void input_details(char *username, char *password)
 {
-  printf("enter user name:");
-  fgets(username, CREDENTIAL_LENGTH, stdin);
-  fix_fgetc_input(username);
+    printf("enter username:");
+    fgets(username, credential_length, stdin);
+    fix_input(username);
 
-  printf("\nenterpassword(enable masking):");
-
-  int i = 0;
-  char ch;
-  while (1)
-  {
-    ch = _getch();
-    if (ch == 13) // ascii value
+    printf("enter password:");
+    int i=0;
+    char ch;
+    while (1)
     {
-      break;
+        ch = _getch();
+        if (ch == 13)
+        {
+            break;
+        }
+        else if (ch == 8)
+        {
+            if (i > 0)
+            {
+                i--;
+                printf("\b \b");
+            }
+        }
+        else if (i < credential_length - 1)
+        {
+            password[i++] = ch;
+            printf("*");
+        }
     }
-    else if (ch == 8) // ASCII value
-    {
-      if (i > 0)
-      {
-        i--;
-        printf("\b \b"); // delete
-      }
-    }
-    else if (i < CREDENTIAL_LENGTH - 1)
-    {
-      password[i++] = ch;
-      printf("*");
-    }
-  }
-  password[i] = '\0';
-
-  printf("\n");
+    password[i] = '\0';
+    printf("\n");
 }
 
-
-void regrister_user()
+void register_user()
 {
-  if (user_count == MAX_USERS)
-  {
-    printf("\nMAXIMUM %d USERS ARE SUPPORTED!!!\n", MAX_USERS);
-    return;
-  }
-  
-  printf("\nregister a new user:\n");
-  input_credentials(users[user_count].username, users[user_count].password);
-  user_count++;
-  printf("\nREGRISTRATION SUCCESSFULL\n");
+    if (user_count == max_users)
+    {
+        printf("MAX %d USERS ARE ALLOWED", max_users);
+    }
+    else
+    {
+        printf("new regristRation:\n");
+        input_details(users[user_count].username, users[user_count].password);
+        user_count++;
+        printf("\nREGRISTRATIONN SUCCESSFUL\n");
+    }
 }
-
-
 int login_user()
 {
-  char username[CREDENTIAL_LENGTH];
-  char password[CREDENTIAL_LENGTH];
-  input_credentials(username, password);
-  for (int i = 0; i < user_count; i++)
-  {
-    if (strcmp(users[i].username, username) == 0 && strcmp(users[i].password, password) == 0)
+    char username[credential_length];
+    char password[credential_length];
+    input_details(username,password);
+    for (int i = 0; i < user_count; i++)
     {
-      return i;
+        if (strcmp(users[i].username, username) == 0 && strcmp(users[i].password, password) == 0)
+        {
+            return i;
+        }
     }
-  }
-  return -1;
+    return -1;
 }
