@@ -1,0 +1,226 @@
+#include <stdio.h>
+#include <conio.h>
+#include <stdlib.h>
+#include <windows.h>
+#include <time.h>
+
+#define width 60
+#define height 20
+
+enum Direction
+{
+    left,
+    right,
+    up,
+    down,
+    stop
+};
+
+enum Direction dir;
+int score;
+int head_x, head_y;
+int tail_length;
+int tail_x[100], tail_y[100];
+int fruit_x, fruit_y;
+int speed = 150;
+
+void input();
+void clear_screen();
+void draw();
+void generate_fruit();
+void set_up();
+void game_play();
+
+int main()
+{
+    srand(time(NULL));
+    set_up();
+    while (1)
+    {
+        draw();
+        input();
+        game_play();
+        Sleep(speed);
+    }
+
+    return 0;
+}
+
+void game_play()
+{
+    for (int i = tail_length - 1; i > 0; i--)
+    {
+        tail_x[i] = tail_x[i - 1];
+        tail_y[i] = tail_y[i - 1];
+    }
+    tail_x[0] = head_x;
+    tail_y[0] = head_y;
+
+    switch (dir)
+    {
+    case up:
+        head_y--;
+        break;
+    case down:
+        head_y++;
+        break;
+    case left:
+        head_x--;
+        break;
+    case right:
+        head_x++;
+        break;
+    case stop:
+        break;
+    }
+
+
+
+    for (int i = 0; i < tail_length; i++)
+    {
+        if (tail_x[i] == head_x && tail_y[i] == head_y)
+        {
+            printf("\nOPPS!!! you hit the tail!!!");
+            exit(0);
+        }
+    }
+
+    if (head_x > width-1 || head_x < 0 || head_y > height-1 || head_y < 0)
+    {
+        printf("\nOPPS COLLISION !!!");
+        exit(0);
+    }
+    
+
+    if (head_x == fruit_x && head_y == fruit_y)
+    {
+        score += 10;
+        if (tail_length < 100)
+        {
+            tail_length++;
+        }
+        if (speed > 30)
+        {
+            speed -= 15;
+        }
+        generate_fruit();
+    }
+}
+
+void clear_screen()
+{
+    system("cls");
+}
+
+void input()
+{
+    if (_kbhit())
+    {
+        char ch = _getch();
+        switch (ch)
+        {
+        case 'a':
+            dir = left;
+            break;
+        case 'd':
+            dir = right;
+            break;
+        case 'w':
+            dir = up;
+            break;
+        case 's':
+            dir = down;
+            break;
+        case 'x':
+            exit(0);
+            break;
+        default:
+            break;
+        }
+    }
+}
+
+void draw()
+{
+    clear_screen();
+    printf("\t\t----WELCOME TO SNAKE GAME----");
+    printf("\n");
+    for (int i = 0; i < width + 2; i++)
+    {
+        printf("#");
+    }
+    for (int i = 0; i < height; i++)
+    {
+        printf("\n#");
+        for (int j = 0; j < width; j++)
+        {
+            if (i == head_y && j == head_x)
+            {
+                printf("O");
+            }
+            else if (i == fruit_y && j == fruit_x)
+            {
+                printf("F");
+            }
+            else
+            {
+                int found=0;
+                for (int k = 0; k < tail_length; k++)
+                {
+                    if (tail_x[k] == j && tail_y[k] == i)
+                    {
+                        printf("o");
+                        found = 1;
+                        break;
+                    }
+                }
+                if (!found)
+                {
+                    printf(" ");
+                }
+            }
+        }
+        printf("#");
+    }
+    printf("\n");
+
+    for (int i = 0; i < width + 2; i++)
+    {
+        printf("#");
+    }
+    printf("\nSCORE:%d\n", score);
+}
+
+void generate_fruit()
+{
+    int valid;
+    do
+    {
+        valid = 1;
+        fruit_x = rand() % width;
+        fruit_y = rand() % height;
+
+        if (head_x == fruit_x && head_y == fruit_y)
+        {
+            valid = 0;
+        }
+        for (int i = 0; i < tail_length; i++)
+        {
+            if (tail_x[i] == fruit_x && tail_y[i] == fruit_y)
+            {
+                valid = 0;
+            }
+        }
+
+    } while (!valid);
+}
+
+void set_up()
+{
+    head_x = width / 2;
+    head_y = height / 2;
+    tail_length = 0;
+    score = 0;
+    dir = stop;
+    generate_fruit();
+}
